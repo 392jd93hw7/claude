@@ -49,6 +49,11 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Server is missing a valid OLLAMA_BASE_URL environment variable." }, { status: 500 });
   }
 
+  // If the example URL was accidentally pasted into the API-key field, use the usual
+  // Ollama placeholder instead of sending the URL as a Bearer token.
+  const configuredApiKey = (process.env.OLLAMA_API_KEY || "ollama").trim();
+  const apiKey = /^https?:\\/\\//i.test(configuredApiKey) ? "ollama" : configuredApiKey;
+
   try {
     const upstream = await fetch(`${baseUrl}/chat/completions`, {
       method: "POST",
