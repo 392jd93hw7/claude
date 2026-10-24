@@ -11,7 +11,10 @@ export default function Home() {
   const [error, setError] = useState("");
   const bottomRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => bottomRef.current?.scrollIntoView({ behavior: "smooth" }), [messages, busy]);
+  // Keep the effect synchronous; effects must not return a Promise.
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages, busy]);
 
   async function sendMessage(event?: FormEvent) {
     event?.preventDefault();
